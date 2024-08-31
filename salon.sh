@@ -9,11 +9,17 @@ MAIN_MENU() {
 
   # get services
   SERVICES_RESULT=$($PSQL "SELECT service_id, name FROM services")
-  echo "$($PSQL "SELECT service_id, name FROM services")" | sed 's/|/) /'
-
+  
   # display services
+  echo "$(echo "$SERVICES_RESULT" | sed 's/|/) /')"
+  echo "$SERVICES_RESULT" | sed 's/|/) /' # we need a list of available services to validate the input against
+  
   # read input
+  #read SELECTED_SERVICE_ID
+  
   # if not valid 
+  
+
   # echo -e "\nI could not find that service. What would you like today?"
   # display services again
   # if valid collect phone number
