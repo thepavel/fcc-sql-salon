@@ -11,20 +11,29 @@ MAIN_MENU() {
   SERVICES_RESULT=$($PSQL "SELECT service_id, name FROM services")
   
   # display services
-  echo "$(echo "$SERVICES_RESULT" | sed 's/|/) /')"
-  echo "$SERVICES_RESULT" | sed 's/|/) /' # we need a list of available services to validate the input against
-  
+  echo "$SERVICES_RESULT" | sed 's/|/) /' 
+  SERVICES_IDS=($(echo "$SERVICES_RESULT | sed 's/^([0-9]+).*/\1/'"))
+  echo $SERVICES_IDS
   # read input
-  #read SELECTED_SERVICE_ID
-  
-  # if not valid 
-  
+  read SERVICE_ID_SELECTED
 
-  # echo -e "\nI could not find that service. What would you like today?"
-  # display services again
-  # if valid collect phone number
-  # get name from db if exists 
-  # or create customer after prompting for name
+  # if not valid
+  if ! [[ $SERVICE_ID_SELECTED ~= '^[0-9]+$' ]]
+  then 
+    echo -e "\nI could not find that service. What would you like today?"
+    # display services again
+  else 
+    # if not available
+    
+    # echo -e "\nI could not find that service. What would you like today?"  
+    # display services again
+    # if valid collect phone number
+    #  get name from db if exists 
+    # or create customer after prompting for name
+  fi
+  
+  
+  
   
 }
 
