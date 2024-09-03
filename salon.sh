@@ -5,9 +5,12 @@ PSQL="psql --username=freecodecamp --dbname=salon -t --no-align -c"
 echo -e "\n~~~~~ MY SALON ~~~~~\n"
 echo -e "Welcome to My Salon, how can I help you?\n"
 
+FINISHED=false
+
 PRINT_SERVICES() {
   # get services
   SERVICES_RESULT=$($PSQL "SELECT service_id, name FROM services")
+  
   # display services
   echo -e "\n$1"
   echo "$SERVICES_RESULT" | sed 's/|/) /' 
@@ -29,10 +32,31 @@ GET_SERVICE_SELECTION() {
     else 
       echo -e "\nWhat's your phone number?"
       read CUSTOMER_PHONE
+
+      CUSTOMER_RESULT=$($PSQL "SELECT name FROM customers WHERE phone = '$CUSTOMER_PHONE'")
+      echo $CUSTOMER_RESULT
+
+      if [[ -z $CUSTOMER_RESULT ]]
+      then
+        echo -e "\nI don't have a record for that phone number, what's your name?"
+        read CUSTOMER_NAME
+      else
+        CUSTOMER_NAME="$CUSTOMER_RESULT"
+      fi
+
+      echo -e "\nWhat time would you like your ${SERVICE_RESULT}, ${CUSTOMER_NAME}?"
+      read SERVICE_TIME
+
+      echo -e "\nI have put you down for a ${SERVICE_RESULT} at ${SERVICE_TIME}, ${CUSTOMER_NAME}."
+      
     fi
-    
   else 
-    echo -e "\nI could not find that service. What would you like today?"
+    if [[ "$SERVICE_ID_SELECTED" = "exit" ]]
+    then 
+      FINISHED="true"
+    else 
+      echo -e "\nI could not find that service. What would you like today?"
+    fi
   fi
 
   # # if not valid
@@ -50,5 +74,6 @@ GET_SERVICE_SELECTION() {
 
 }
 
-
+while [ "$FINISHED" != "true"  ]; do
   GET_SERVICE_SELECTION 
+done
