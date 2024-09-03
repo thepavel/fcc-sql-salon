@@ -40,6 +40,8 @@ GET_SERVICE_SELECTION() {
       then
         echo -e "\nI don't have a record for that phone number, what's your name?"
         read CUSTOMER_NAME
+
+        echo $($PSQL "INSERT INTO customers (phone, name) VALUES ('$CUSTOMER_PHONE', '$CUSTOMER_NAME')")
       else
         CUSTOMER_NAME="$CUSTOMER_RESULT"
       fi
@@ -47,8 +49,11 @@ GET_SERVICE_SELECTION() {
       echo -e "\nWhat time would you like your ${SERVICE_RESULT}, ${CUSTOMER_NAME}?"
       read SERVICE_TIME
 
+      # insert appointment
+      echo $($PSQL "INSERT INTO appointments(customer_id, service_id, time) SELECT customer_id, $SERVICE_ID_SELECTED, '$SERVICE_TIME' FROM customers")
+
       echo -e "\nI have put you down for a ${SERVICE_RESULT} at ${SERVICE_TIME}, ${CUSTOMER_NAME}."
-      
+      FINISHED="true"
     fi
   else 
     if [[ "$SERVICE_ID_SELECTED" = "exit" ]]
@@ -62,14 +67,7 @@ GET_SERVICE_SELECTION() {
   # # if not valid
   # if [[ $SERVICE_ID_SELECTED =~ '^[0-9]+$' ]]
   # then 
-    
-  #   # display services again
-  #   # if not available
-  #   # echo -e "\nI could not find that service. What would you like today?"  
-  #   # display services again
-  #   # if valid collect phone number
-  #   #  get name from db if exists 
-  #   # or create customer after prompting for name
+   
   # fi
 
 }
